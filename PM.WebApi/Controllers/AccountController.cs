@@ -332,6 +332,43 @@ namespace PM.WebApi.Controllers
             return logins;
         }
 
+        [AllowAnonymous]
+        [Route("SuperAdmin")]
+        public async Task<IHttpActionResult> SuperAdmin(RegisterBindingModel model)
+        {
+            var user = new ApplicationUser()
+            {
+                UserName = model.UserName,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                EmailConfirmed = true,
+            };
+
+            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
+            if (!RoleManager.RoleExists("Admin"))
+            {
+                RoleManager.Create(new IdentityRole { Name = "SuperAdmin" });
+                RoleManager.Create(new IdentityRole { Name = "Admin" });
+                RoleManager.Create(new IdentityRole { Name = "User" });
+            }
+
+            var adminUser = UserManager.FindByName(user.UserName);
+
+            result = UserManager.AddToRoles(adminUser.Id, new string[] { "SuperAdmin", "Admin" });
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
+            return Ok();
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]

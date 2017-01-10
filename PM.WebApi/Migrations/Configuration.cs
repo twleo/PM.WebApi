@@ -37,13 +37,12 @@ namespace PM.WebApi.Migrations
             var user = new ApplicationUser()
             {
                 UserName = "jccsung",
-                Email = "jen_sung@hotmail.com",
                 EmailConfirmed = true,
                 FirstName = "Jennifer",
                 LastName = "Sung"
             };
             
-            manager.Create(user, "jsung62817");
+            manager.Create(user, "jsung");
 
             if (roleManager.Roles.Count() == 0)
             {
